@@ -23,17 +23,15 @@ public class Person {
         this.altura = altura; //deve estar em metros
     }
 
-    public void calcularIMC() {
+    public int calcularIMC() {
         float imc = this.peso / (this.altura * this.altura);
         if (imc < 20){
-            System.out.println("-1");
+            return -1;
         }
-        else if (imc >= 20 && imc <= 25) {
-            System.out.printf("0");
-        } else {
-            System.out.printf("1");
+        if (imc >= 20 && imc <= 25) {
+            return 0;
         }
-        System.out.println();
+        return 1;
     }
 
     public boolean isOldOfAge(){ return this.idade >= 18; }
