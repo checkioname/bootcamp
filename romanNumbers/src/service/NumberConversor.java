@@ -3,7 +3,8 @@ package service;
 import java.io.CharArrayReader;
 import java.util.Map;
 
-public class numberConversor {
+@Service
+public class NumberConversor {
     Map<String, Integer> map = Map.of(
             "I", 1,
             "V", 5,
@@ -18,22 +19,16 @@ public class numberConversor {
     public int toDecimal(String romanNumber) {
         Integer decimalNumber = 0;
         char[] romanNumberArray = romanNumber.toUpperCase().toCharArray();
-        for (int i = 0; i <= romanNumber.length(); i++ ) {
-            var value = map.get(romanNumberArray[i]);
-            if (i == 0) {
+        for (int i = 0; i < romanNumber.length(); i++ ) {
+            int value = map.get(String.valueOf(romanNumberArray[i]));
+
+            if (i > 0 && value > map.get(String.valueOf(romanNumberArray[i - 1]))) {
+                decimalNumber += value - 2 * map.get(String.valueOf(romanNumberArray[i - 1]));
+            } else {
                 decimalNumber += value;
-                continue;
             }
-
-            var lastValue = map.get(romanNumberArray[i -1]);
-            if (lastValue < value) {
-                decimalNumber -= value;
-                continue;
-            }
-
-            decimalNumber += value;
         }
-        return 1;
+        return decimalNumber;
     }
 
 
