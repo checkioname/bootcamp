@@ -2,14 +2,23 @@ package com.meli.calories.services;
 
 import com.meli.calories.dtos.RecipieDTO;
 import com.meli.calories.models.Food;
+import com.meli.calories.repositories.RecipiesRepository;
 import com.meli.calories.repositories.RecipiesRepositoryInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RecipiesService {
+public class RecipiesService implements RecipiesServiceInterface{
+
+    @Autowired
     private static RecipiesRepositoryInterface repo;
 
-        public int getTotalCalories() {
+    @Autowired
+    public RecipiesService(RecipiesRepositoryInterface r) {
+        repo = r;
+    }
+
+    public int getTotalCalories() {
         return repo.getTotalCalories();
     }
 
