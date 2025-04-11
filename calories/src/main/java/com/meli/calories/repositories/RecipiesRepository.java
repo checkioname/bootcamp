@@ -7,8 +7,10 @@ import com.meli.calories.models.Food;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class RecipiesRepository implements RecipiesRepositoryInterface {
@@ -43,8 +45,11 @@ public class RecipiesRepository implements RecipiesRepositoryInterface {
     }
 
     public RecipieDTO getRecipieInfo(String ingredientes) {
-        var ingredientesNameList = ingredientes.split(",");
-        var ingredientsList = repo.stream().filter(c -> c.getName().equals(ingredientesNameList)).toList();
+        var ingredientesNameList = Arrays.stream(ingredientes.split(",")).toList();
+        var ingredientsList = repo.stream()
+                                             .filter(c -> ingredientesNameList.contains(c.getName()))
+                                             .collect(Collectors.toList()).stream().toList();
+
         var totalCalories = ingredientsList.stream().mapToInt(c -> c.getCalories()).sum();
         var mostCalories = ingredientsList.stream().max(Comparator.comparing(Food::getCalories)).get();
 
