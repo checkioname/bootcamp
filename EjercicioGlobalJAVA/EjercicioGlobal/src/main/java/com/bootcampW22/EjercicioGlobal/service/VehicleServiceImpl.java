@@ -37,11 +37,11 @@ public class VehicleServiceImpl implements IVehicleService{
     public void deleteVehicle(Long id) {
         if (isIdValid(id)) {
             var vehicle = vehicleRepository.findById(id); // Método findById retornando Car ou null
-            if (vehicle.get() == null) {
-
+            if (vehicle.isEmpty()) {
                 throw new NotFoundException(("Veículo não encontrado com ID: " + id));
             }
             vehicleRepository.deleteVehicle(vehicle.get().getId());
+            return;
         }
         throw new InvalidParameterException("O parametro fornecido é inválido");
     }

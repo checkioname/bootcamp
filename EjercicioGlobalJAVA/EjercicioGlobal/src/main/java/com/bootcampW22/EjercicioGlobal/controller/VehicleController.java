@@ -25,9 +25,11 @@ public class VehicleController {
     }
 
     @DeleteMapping("/vehicles/{id}")
-    public ResponseEntity<?> deleteVehicle(@PathVariable Long id) {
+    public ResponseEntity<?> deleteVehicle(@PathVariable String id) {
         try {
-            vehicleService.deleteVehicle(id);
+            Long vehicleId = Long.parseLong(id);
+            System.out.println(vehicleId);
+            vehicleService.deleteVehicle(vehicleId);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
