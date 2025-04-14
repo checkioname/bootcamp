@@ -7,12 +7,16 @@ public class Car {
     private int id;
     private String brand;
     private String model;
+
+    private String color;
     private Date manufacuringDate;
     private int numberOfKilometers;
     private int doors;
     private double price;
     private String currency;
     private int countOfOwners;
+
+    private int year;
 
     public int getId() {
         return id;
@@ -36,6 +40,14 @@ public class Car {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public Date getManufacuringDate() {
@@ -86,8 +98,19 @@ public class Car {
         this.countOfOwners = countOfOwners;
     }
 
+    public int getYear(){
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
     public Car() {}
 
+    public Car(String brand) {
+        this.brand = brand;
+    }
     public Car(String brand, String model, Date manufacuringDate, int numberOfKilometers, int doors, double price, String currency, int countOfOwners) {
         this.brand = brand;
         this.model = model;
