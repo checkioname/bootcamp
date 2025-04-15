@@ -1,14 +1,15 @@
 package com.bootcampW22.EjercicioGlobal.controller;
 
+import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.service.IVehicleService;
 import com.bootcampW22.EjercicioGlobal.service.VehicleServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.management.openmbean.KeyAlreadyExistsException;
+import java.security.InvalidParameterException;
 
 @RestController
 public class VehicleController {
@@ -38,4 +39,21 @@ public class VehicleController {
                     .body("Erro ao deletar veículo: " + e.getMessage());
         }
     }
+
+    @PostMapping("/vehicles")
+    public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
+        try {
+            var response = vehicleService.addVehicle(vehicle);
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (KeyAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno no servidor");
+        }
+        return null;
+    }
+
+
+
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,15 +26,23 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
         return listOfVehicles;
     }
 
-
+    @Override
     public Optional<Vehicle> findById(Long id) {
         return listOfVehicles.stream().filter(v -> v.getId().equals(id)).findFirst();
     }
 
+   public List<Vehicle> findVehicles(String color, int year){
+        return listOfVehicles.stream().filter(v -> v.getColor().equals(color) && v.getYear() == year).toList();
+   }
 
     @Override
     public boolean deleteVehicle(Long id) {
         return listOfVehicles.removeIf(v -> v.getId() == id);
+    }
+
+    @Override
+    public boolean addVehicle(Vehicle vehicle) {
+        return listOfVehicles.add(vehicle);
     }
 
     private void loadDataBase() throws IOException {

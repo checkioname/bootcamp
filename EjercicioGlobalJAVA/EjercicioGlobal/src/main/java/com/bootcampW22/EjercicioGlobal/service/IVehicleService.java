@@ -7,4 +7,6 @@ import java.util.List;
 public interface IVehicleService {
     List<VehicleDto> searchAllVehicles();
     void deleteVehicle(Long id);
+    boolean addVehicle(VehicleDto vehicle);
+    List<VehicleDto> findVehicles(String color, int year);
 }

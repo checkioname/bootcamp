@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IVehicleRepository {
     List<Vehicle> findAll();
     boolean deleteVehicle(Long id);
-
-     Optional<Vehicle> findById(Long id);
+    Optional<Vehicle> findById(Long id);
+    boolean addVehicle(Vehicle vehicle);
+    List<Vehicle> findVehicles(String color, int year);
 }
