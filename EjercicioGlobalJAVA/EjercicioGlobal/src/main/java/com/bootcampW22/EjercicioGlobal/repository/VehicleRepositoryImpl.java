@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +52,16 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     public boolean addVehicle(Vehicle vehicle) {
         return listOfVehicles.add(vehicle);
     }
+
+    @Override
+    public double meanSpeedByBrand(String brand) {
+        return listOfVehicles.stream()
+                .filter(v -> v.getBrand().equalsIgnoreCase(brand))
+                .mapToInt(v -> Integer.parseInt(v.getMax_speed())).average().orElse(0.0);
+    }
+
+
+
 
     private void loadDataBase() throws IOException {
         File file;

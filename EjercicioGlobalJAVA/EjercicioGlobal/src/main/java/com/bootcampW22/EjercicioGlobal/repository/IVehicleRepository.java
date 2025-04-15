@@ -12,4 +12,6 @@ public interface IVehicleRepository {
     boolean addVehicle(Vehicle vehicle);
     List<Vehicle> findVehicles(String color, int year);
     List<Vehicle> findVehicles(String brand, int start_date, int end_date);
+
+    double meanSpeedByBrand(String brand);
 }

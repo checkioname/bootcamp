@@ -6,9 +6,7 @@ import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.repository.IVehicleRepository;
 import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
@@ -58,6 +56,10 @@ public class VehicleServiceImpl implements IVehicleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public double getBrandMeanSpeed(String brand) {
+       return vehicleRepository.meanSpeedByBrand(brand);
+    }
 
 
     @Override

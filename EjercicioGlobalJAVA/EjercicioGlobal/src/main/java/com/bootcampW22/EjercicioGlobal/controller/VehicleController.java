@@ -13,6 +13,7 @@ import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class VehicleController {
@@ -55,6 +56,16 @@ public class VehicleController {
                     .body(Collections.singletonList("Houve um erro interno"));
         }
     }
+
+    @GetMapping("/vehicles/average_speed/brand/{brand}")
+    public ResponseEntity<?> getBrandMeanSpeed(@PathVariable String brand) {
+        try {
+            return ResponseEntity.ok(vehicleService.getBrandMeanSpeed(brand));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno");
+        }
+    }
+
 
     @DeleteMapping("/vehicles/{id}")
     public ResponseEntity<?> deleteVehicle(@PathVariable String id) {
