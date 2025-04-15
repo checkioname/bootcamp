@@ -4,12 +4,15 @@ import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.service.IVehicleService;
 import com.bootcampW22.EjercicioGlobal.service.VehicleServiceImpl;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 public class VehicleController {
@@ -24,6 +27,21 @@ public class VehicleController {
     public ResponseEntity<?> getVehicles(){
         return new ResponseEntity<>(vehicleService.searchAllVehicles(), HttpStatus.OK);
     }
+
+    @GetMapping("/vehicles/search")
+    public ResponseEntity<?> getVehicles(@RequestParam String color, @RequestParam int year) {
+        try {
+            var response = vehicleService.findVehicles(color, year);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonList("Houve um erro interno"));
+        }
+    }
+
 
     @DeleteMapping("/vehicles/{id}")
     public ResponseEntity<?> deleteVehicle(@PathVariable String id) {
@@ -53,6 +71,7 @@ public class VehicleController {
         }
         return null;
     }
+
 
 
 

@@ -38,18 +38,15 @@ public class VehicleServiceImpl implements IVehicleService {
 
     @Override
     public List<VehicleDto> findVehicles(String color, int year) {
-        try {
-            List<Vehicle> vehicleList = vehicleRepository.findVehicles(color, year);
-            if (vehicleList.isEmpty()) {
-                throw new NotFoundException("No vehicle was found");
-            }
-            return vehicleList.stream()
-                    .map(this::convertVehicleToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Houve um erro interno");
+        List<Vehicle> vehicleList = vehicleRepository.findVehicles(color, year);
+        if (vehicleList.isEmpty()) {
+            throw new NotFoundException("No vehicle was found with color: " + color + " and year: " + year);
         }
+        return vehicleList.stream()
+                .map(this::convertVehicleToDto)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public void deleteVehicle(Long id) {
