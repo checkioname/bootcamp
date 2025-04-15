@@ -42,6 +42,19 @@ public class VehicleController {
         }
     }
 
+    @GetMapping("/vehicles/brandc/{brand}/between/{start_date}/{end_date}")
+    public ResponseEntity<?> getVehiclesByBrandYear(@PathVariable String brand, @PathVariable int start_date, @PathVariable int end_date) {
+        try {
+            var response = vehicleService.findVehicles(brand, start_date, end_date);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonList("Houve um erro interno"));
+        }
+    }
 
     @DeleteMapping("/vehicles/{id}")
     public ResponseEntity<?> deleteVehicle(@PathVariable String id) {

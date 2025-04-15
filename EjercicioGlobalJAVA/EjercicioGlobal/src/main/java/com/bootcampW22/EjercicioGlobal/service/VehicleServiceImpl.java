@@ -47,6 +47,18 @@ public class VehicleServiceImpl implements IVehicleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<VehicleDto> findVehicles(String brand, int start_date, int end_date) {
+        List<Vehicle> vehicleList = vehicleRepository.findVehicles(brand, start_date, end_date);
+        if (vehicleList.isEmpty()) {
+            throw new NotFoundException("Nenhum veiculo encontrado");
+        }
+        return vehicleList.stream()
+                .map(this::convertVehicleToDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public void deleteVehicle(Long id) {

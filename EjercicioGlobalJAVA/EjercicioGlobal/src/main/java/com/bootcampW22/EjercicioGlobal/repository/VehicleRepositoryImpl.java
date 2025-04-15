@@ -38,6 +38,12 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
                 .toList();
     }
 
+    public List<Vehicle> findVehicles(String brand, int start_date, int end_date) {
+        return listOfVehicles.stream()
+                .filter(v -> v.getBrand().equalsIgnoreCase(brand) && v.getYear() >= start_date && v.getYear() <= end_date)
+                .toList();
+    }
+
     @Override
     public boolean deleteVehicle(Long id) {
         return listOfVehicles.removeIf(v -> v.getId() == id);
