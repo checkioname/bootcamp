@@ -14,4 +14,6 @@ public interface IVehicleRepository {
     List<Vehicle> findVehicles(String brand, int start_date, int end_date);
 
     double meanSpeedByBrand(String brand);
+
+    List<Vehicle> bulkInsert(List<Vehicle> vehicles);
 }

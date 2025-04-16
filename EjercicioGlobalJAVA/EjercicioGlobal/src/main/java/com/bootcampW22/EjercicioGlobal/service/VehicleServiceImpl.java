@@ -61,6 +61,12 @@ public class VehicleServiceImpl implements IVehicleService {
        return vehicleRepository.meanSpeedByBrand(brand);
     }
 
+    @Override
+    public List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos) {
+        var vehicles = vehiclesDtos.stream().map(this::convertDtoToDomain).toList();
+        var response = vehicleRepository.bulkInsert(vehicles);
+        return response.stream().map(this::convertVehicleToDto).toList();
+    }
 
     @Override
     public void deleteVehicle(Long id) {

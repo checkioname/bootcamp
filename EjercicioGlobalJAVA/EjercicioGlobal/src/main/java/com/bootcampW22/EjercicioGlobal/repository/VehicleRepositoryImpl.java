@@ -9,8 +9,10 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class VehicleRepositoryImpl implements IVehicleRepository{
@@ -59,6 +61,24 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
                 .filter(v -> v.getBrand().equalsIgnoreCase(brand))
                 .mapToInt(v -> Integer.parseInt(v.getMax_speed())).average().orElse(0.0);
     }
+
+    @Override
+    public List<Vehicle> bulkInsert(List<Vehicle> vehicles) {
+        var existingVehicles = listOfVehicles.stream()
+                .map(Vehicle::getId)
+                .filter(vehicles::contains)
+                .collect(Collectors.toList());
+        if (!existingVehicles.isEmpty()) {
+            System.out.printf("Esses veiculos ja foram adicionados: %d", existingVehicles);
+            return vehicles.stream().filter(v -> existingVehicles.contains(v.getId())).toList();
+        }
+        var response = listOfVehicles.addAll(vehicles);
+        if (response) {
+            return listOfVehicles;
+        }
+        return Collections.emptyList();
+    }
+
 
 
 

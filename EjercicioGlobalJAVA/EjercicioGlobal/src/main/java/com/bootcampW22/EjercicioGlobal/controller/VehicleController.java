@@ -66,6 +66,15 @@ public class VehicleController {
         }
     }
 
+    @PostMapping("vehicles/batch")
+    public ResponseEntity<?> bulkInsert(@RequestBody List<VehicleDto> vehicles) {
+        try {
+            return ResponseEntity.ok(vehicleService.bulkInsert(vehicles));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ouve um erro no servidor");
+        }
+    }
+
 
     @DeleteMapping("/vehicles/{id}")
     public ResponseEntity<?> deleteVehicle(@PathVariable String id) {

@@ -9,6 +9,8 @@ public interface IVehicleService {
 
     double getBrandMeanSpeed(String brand);
 
+    List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos);
+
     void deleteVehicle(Long id);
     boolean addVehicle(VehicleDto vehicle);
     List<VehicleDto> findVehicles(String color, int year);
