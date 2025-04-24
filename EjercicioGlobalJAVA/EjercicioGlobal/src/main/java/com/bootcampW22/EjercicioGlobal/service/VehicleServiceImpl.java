@@ -10,10 +10,10 @@ import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,10 +37,13 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
-    public List<VehicleDto> findVehicles(String color, int year) {
-        List<Vehicle> vehicleList = vehicleRepository.findVehicles(color, year);
+    public List<VehicleDto> findVehicles(Optional<String> color, Optional<Integer> year) {
+        var c = color.orElse("");
+        var y = year.orElse(0);
+
+        List<Vehicle> vehicleList = vehicleRepository.findVehicles(c, y);
         if (vehicleList.isEmpty()) {
-            throw new NotFoundException("No vehicle was found with color: " + color + " and year: " + year);
+            throw new NotFoundException("No vehicle was found with color: " + c + " and year: " + y);
         }
         return vehicleList.stream()
                 .map(this::convertVehicleToDto)

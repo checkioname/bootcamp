@@ -8,6 +8,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +35,14 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
 
     @Override
     public List<Vehicle> findVehicles(String color, int year){
+        System.out.printf("recebi uma request: %s %s",color, year);
         return listOfVehicles.stream()
-                .filter(v -> v.getColor().equalsIgnoreCase(color) && v.getYear() == year)
+                .filter(v -> color.isEmpty() || v.getColor().equalsIgnoreCase(color))
+                .filter(v -> year == 0 || v.getYear() == year)
                 .toList();
     }
 
+    @Override
     public List<Vehicle> findVehicles(String brand, int start_date, int end_date) {
         return listOfVehicles.stream()
                 .filter(v -> v.getBrand().equalsIgnoreCase(brand) && v.getYear() >= start_date && v.getYear() <= end_date)

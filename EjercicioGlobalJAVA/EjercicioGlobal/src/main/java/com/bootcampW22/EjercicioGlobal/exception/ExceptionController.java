@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 
 @ControllerAdvice(assignableTypes=VehicleController.class)
 public class ExceptionController {
@@ -27,6 +28,11 @@ public class ExceptionController {
 
     @ExceptionHandler(InvalidVehicleException.class)
     public ResponseEntity<?> invalidVehicle(InvalidVehicleException e){
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<?> invalidParameter(InvalidParameterException e){
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
         return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
     }

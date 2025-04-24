@@ -14,6 +14,7 @@ import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -26,14 +27,8 @@ public class VehicleController {
     }
 
     @GetMapping("/vehicles")
-    public ResponseEntity<?> getVehicles(){
-        return new ResponseEntity<>(vehicleService.searchAllVehicles(), HttpStatus.OK);
-    }
-
-    @GetMapping("/vehicles/search")
-    public ResponseEntity<?> getVehicles(@RequestParam String color, @RequestParam int year) {
-            var response = vehicleService.findVehicles(color, year);
-            return ResponseEntity.ok(response);
+    public ResponseEntity<?> getVehicles(@RequestParam(required = false) Optional<String> color , @RequestParam(required = false) Optional<Integer> year){
+        return new ResponseEntity<>(vehicleService.findVehicles(color, year), HttpStatus.OK);
     }
 
     @GetMapping("/vehicles/brandc/{brand}/between/{start_date}/{end_date}")
