@@ -16,4 +16,5 @@ public interface IVehicleRepository {
     double meanSpeedByBrand(String brand);
 
     List<Vehicle> bulkInsert(List<Vehicle> vehicles);
+    void updateSpeed(Long id, String speed);
 }

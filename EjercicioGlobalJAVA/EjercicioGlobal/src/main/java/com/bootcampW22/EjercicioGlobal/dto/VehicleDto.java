@@ -2,7 +2,7 @@ package com.bootcampW22.EjercicioGlobal.dto;
 
 
 public record VehicleDto(
-    Long id,
+    long id,
     String brand,
     String model,
     String registration,

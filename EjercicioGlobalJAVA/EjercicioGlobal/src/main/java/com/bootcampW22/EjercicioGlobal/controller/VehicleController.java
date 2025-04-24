@@ -8,6 +8,7 @@ import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.InvalidParameterException;
@@ -31,78 +32,50 @@ public class VehicleController {
 
     @GetMapping("/vehicles/search")
     public ResponseEntity<?> getVehicles(@RequestParam String color, @RequestParam int year) {
-        try {
             var response = vehicleService.findVehicles(color, year);
             return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonList("Houve um erro interno"));
-        }
     }
 
     @GetMapping("/vehicles/brandc/{brand}/between/{start_date}/{end_date}")
     public ResponseEntity<?> getVehiclesByBrandYear(@PathVariable String brand, @PathVariable int start_date, @PathVariable int end_date) {
-        try {
             var response = vehicleService.findVehicles(brand, start_date, end_date);
             return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonList("Houve um erro interno"));
-        }
     }
 
     @GetMapping("/vehicles/average_speed/brand/{brand}")
     public ResponseEntity<?> getBrandMeanSpeed(@PathVariable String brand) {
-        try {
             return ResponseEntity.ok(vehicleService.getBrandMeanSpeed(brand));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno");
-        }
     }
 
-    @PostMapping("vehicles/batch")
+    @PostMapping("/vehicles/batch")
     public ResponseEntity<?> bulkInsert(@RequestBody List<VehicleDto> vehicles) {
-        try {
             return ResponseEntity.ok(vehicleService.bulkInsert(vehicles));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ouve um erro no servidor");
-        }
-    }
+   }
+
+    @PutMapping("/vehicles/{id}/update_speed")
+    public ResponseEntity<?> updateSpeed(@PathVariable long id, @RequestParam String speed) {
+            vehicleService.updateSpeed(id, speed);
+            return ResponseEntity.ok("veiculo atualizado com sucesso");
+   }
 
 
     @DeleteMapping("/vehicles/{id}")
-    public ResponseEntity<?> deleteVehicle(@PathVariable String id) {
-        try {
-            Long vehicleId = Long.parseLong(id);
-            System.out.println(vehicleId);
-            vehicleService.deleteVehicle(vehicleId);
+    public ResponseEntity<?> deleteVehicle(@PathVariable Long id) {
+            vehicleService.deleteVehicle(id);
             return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao deletar veículo: " + e.getMessage());
-        }
-    }
+   }
 
     @PostMapping("/vehicles")
     public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
-        try {
             var response = vehicleService.addVehicle(vehicle);
-        } catch (InvalidParameterException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (KeyAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno no servidor");
-        }
-        return null;
+//        } catch (InvalidParameterException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        } catch (KeyAlreadyExistsException e) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno no servidor");
+//        }
+        return ResponseEntity.ok().build();
     }
 
 

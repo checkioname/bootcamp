@@ -11,6 +11,8 @@ public interface IVehicleService {
 
     List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos);
 
+    void updateSpeed(Long id, String speed);
+
     void deleteVehicle(Long id);
     boolean addVehicle(VehicleDto vehicle);
     List<VehicleDto> findVehicles(String color, int year);

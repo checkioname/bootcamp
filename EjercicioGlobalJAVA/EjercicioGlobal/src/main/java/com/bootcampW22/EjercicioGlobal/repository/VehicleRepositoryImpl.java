@@ -80,8 +80,14 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     }
 
 
-
-
+    @Override
+    public void updateSpeed(Long id, String speed) {
+        listOfVehicles.stream().forEach(v -> {
+            if (v.getId().equals(id)) {
+                v.setMax_speed(speed);
+            }
+        });
+    }
 
     private void loadDataBase() throws IOException {
         File file;

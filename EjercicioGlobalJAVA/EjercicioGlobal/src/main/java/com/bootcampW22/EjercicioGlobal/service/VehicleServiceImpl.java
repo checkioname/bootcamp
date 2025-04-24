@@ -2,6 +2,8 @@ package com.bootcampW22.EjercicioGlobal.service;
 
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
 import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
+import com.bootcampW22.EjercicioGlobal.exception.DuplicateVehicleException;
+import com.bootcampW22.EjercicioGlobal.exception.InvalidVehicleException;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.repository.IVehicleRepository;
 import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
@@ -69,6 +71,12 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
+    public void updateSpeed(Long id, String speed) {
+        vehicleRepository.updateSpeed(id, speed);
+    }
+
+
+    @Override
     public void deleteVehicle(Long id) {
         if (isIdValid(id)) {
             var vehicle = vehicleRepository.findById(id); // Método findById retornando Car ou null
@@ -86,25 +94,24 @@ public class VehicleServiceImpl implements IVehicleService {
         List<String> validationErrors = validateVehicle(vehicle);
         if (!validationErrors.isEmpty()) {
             System.out.println("Tentativa de adição de veículo falhou: " + String.join(", ", validationErrors));
-            throw new InvalidParameterException("O veículo fornecido é inválido: " + String.join(", ", validationErrors));
+            throw new InvalidVehicleException("O veículo fornecido é inválido: " + String.join(", ", validationErrors));
         }
-        try {
-            var vehicleDomain = convertDtoToDomain(vehicle);
+        var vehicleDomain = convertDtoToDomain(vehicle);
 
-            var exists = vehicleRepository.findById(vehicle.id());
-            if (exists.isEmpty()) {
-                return vehicleRepository.addVehicle(vehicleDomain);
-            }
-            throw new KeyAlreadyExistsException("Chave ja duplicada!");
-        } catch (Exception e) {
-            throw new InvalidParameterException("O veículo fornecido é inválido");
+        var exists = vehicleRepository.findById(vehicle.id());
+        if (exists.isPresent()) {
+            throw new DuplicateVehicleException("O veículo ja existe!");
         }
+        return vehicleRepository.addVehicle(vehicleDomain);
     }
 
     private List<String> validateVehicle(VehicleDto vehicle) {
         List<String> errors = new ArrayList<>();
         if (vehicle == null) {
                 errors.add("O veiculo nao pode ser nulo");
+        }
+        if (vehicle.brand() == null || vehicle.brand().isEmpty()) {
+            errors.add("O veiculo precisa ter uma marca");
         }
         // ... (adicionar mais validacoes)
         return errors;
