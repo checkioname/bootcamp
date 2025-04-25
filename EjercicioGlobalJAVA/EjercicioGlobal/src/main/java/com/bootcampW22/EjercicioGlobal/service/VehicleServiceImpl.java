@@ -10,6 +10,7 @@ import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.NotActiveException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +20,12 @@ import java.util.stream.Collectors;
 @Service
 public class VehicleServiceImpl implements IVehicleService {
 
-    @Autowired
-    IVehicleRepository vehicleRepository;
+    private final IVehicleRepository vehicleRepository;
 
     public VehicleServiceImpl(VehicleRepositoryImpl vehicleRepository){
         this.vehicleRepository = vehicleRepository;
     }
+
     @Override
     public List<VehicleDto> searchAllVehicles() {
         List<Vehicle> vehicleList = vehicleRepository.findAll();
@@ -62,13 +63,19 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
-    public double getBrandMeanSpeed(String brand) {
+    public double getBrandMeanSpeed(String brand) throws NotFoundException {
        return vehicleRepository.meanSpeedByBrand(brand);
     }
 
     @Override
     public List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos) {
         var vehicles = vehiclesDtos.stream().map(this::convertDtoToDomain).toList();
+        var existingVehicles = vehicleRepository.getDuplicatedVehiclesIds(vehicles);
+        System.out.println(existingVehicles);
+        if (!existingVehicles.isEmpty()) {
+            throw new DuplicateVehicleException("Esses veiculos ja foram adicionados: " + existingVehicles);
+        }
+
         var response = vehicleRepository.bulkInsert(vehicles);
         return response.stream().map(this::convertVehicleToDto).toList();
     }
@@ -93,7 +100,7 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
-    public boolean addVehicle(VehicleDto vehicle) {
+    public String addVehicle(VehicleDto vehicle) {
         List<String> validationErrors = validateVehicle(vehicle);
         if (!validationErrors.isEmpty()) {
             System.out.println("Tentativa de adição de veículo falhou: " + String.join(", ", validationErrors));
@@ -105,7 +112,8 @@ public class VehicleServiceImpl implements IVehicleService {
         if (exists.isPresent()) {
             throw new DuplicateVehicleException("O veículo ja existe!");
         }
-        return vehicleRepository.addVehicle(vehicleDomain);
+        vehicleRepository.addVehicle(vehicleDomain);
+        return "Veiculo criado com sucesso!";
     }
 
     private List<String> validateVehicle(VehicleDto vehicle) {
@@ -121,6 +129,10 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     private Vehicle convertDtoToDomain(VehicleDto v) {
+        if (!isVehicleDtoValid(v)) {
+            throw new InvalidVehicleException("Vehicle data malformed");
+        }
+
         return new Vehicle(
                v.id(),
                v.brand(),
@@ -155,6 +167,21 @@ public class VehicleServiceImpl implements IVehicleService {
                 v.getWeight());
     }
 
+    private boolean isVehicleDtoValid(VehicleDto dto) {
+        if (dto == null) {
+            return false;
+        }
+        if (dto.id() < 0) {
+            return false;
+        }
+        if (dto.length() < 0) {
+            return false;
+        }
+        if (dto.width() < 0) {
+            return false;
+        }
+        return true;
+    }
 
     private boolean isIdValid(Long id) { return true;}
 }

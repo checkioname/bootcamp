@@ -1,6 +1,8 @@
 package com.bootcampW22.EjercicioGlobal.repository;
 
 import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
+import com.bootcampW22.EjercicioGlobal.exception.InvalidVehicleException;
+import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -8,7 +10,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,29 +61,31 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     }
 
     @Override
-    public double meanSpeedByBrand(String brand) {
+    public double meanSpeedByBrand(String brand) throws NotFoundException {
         return listOfVehicles.stream()
                 .filter(v -> v.getBrand().equalsIgnoreCase(brand))
-                .mapToInt(v -> Integer.parseInt(v.getMax_speed())).average().orElse(0.0);
+                .mapToInt(v -> Integer.parseInt(v.getMax_speed()))
+                .average()
+                .orElseThrow(() -> new InvalidVehicleException("Nenhuma marca encontrada!"));
     }
 
     @Override
     public List<Vehicle> bulkInsert(List<Vehicle> vehicles) {
-        var existingVehicles = listOfVehicles.stream()
-                .map(Vehicle::getId)
-                .filter(vehicles::contains)
-                .collect(Collectors.toList());
-        if (!existingVehicles.isEmpty()) {
-            System.out.printf("Esses veiculos ja foram adicionados: %d", existingVehicles);
-            return vehicles.stream().filter(v -> existingVehicles.contains(v.getId())).toList();
-        }
-        var response = listOfVehicles.addAll(vehicles);
+
+       var response = listOfVehicles.addAll(vehicles);
         if (response) {
             return listOfVehicles;
         }
         return Collections.emptyList();
     }
 
+    @Override
+    public List<Long> getDuplicatedVehiclesIds(List<Vehicle> vehicles) {
+        return  listOfVehicles.stream()
+                        .filter(v -> vehicles.contains(v))
+                        .map(Vehicle::getId)
+                        .collect(Collectors.toList());
+    }
 
     @Override
     public void updateSpeed(Long id, String speed) {

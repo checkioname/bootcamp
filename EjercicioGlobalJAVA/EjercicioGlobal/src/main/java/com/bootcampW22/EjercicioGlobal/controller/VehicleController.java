@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class VehicleController {
 
-    IVehicleService vehicleService;
+    private final IVehicleService vehicleService;
 
     public VehicleController(VehicleServiceImpl vehicleService){
         this.vehicleService = vehicleService;
@@ -62,15 +62,7 @@ public class VehicleController {
 
     @PostMapping("/vehicles")
     public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
-            var response = vehicleService.addVehicle(vehicle);
-//        } catch (InvalidParameterException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        } catch (KeyAlreadyExistsException e) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Houve um erro interno no servidor");
-//        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(vehicleService.addVehicle(vehicle));
     }
 
 
