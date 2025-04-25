@@ -49,8 +49,7 @@ public class VehicleController {
 
     @PutMapping("/vehicles/{id}/update_speed")
     public ResponseEntity<?> updateSpeed(@PathVariable long id, @RequestParam String speed) {
-            vehicleService.updateSpeed(id, speed);
-            return ResponseEntity.ok("veiculo atualizado com sucesso");
+            return ResponseEntity.ok(vehicleService.updateSpeed(id, speed));
    }
 
 

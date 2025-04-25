@@ -7,11 +7,10 @@ import com.bootcampW22.EjercicioGlobal.exception.InvalidVehicleException;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.repository.IVehicleRepository;
 import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.NotActiveException;
 import java.security.InvalidParameterException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,8 +80,30 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
-    public void updateSpeed(Long id, String speed) {
+    public String updateSpeed(Long id, String speed) {
+        double speedNumber;
+        isSpeedValid(speed);
+
+        var vehicleExist = vehicleRepository.findById(id);
+        if (vehicleExist.isEmpty()) {
+            throw new NotFoundException("Vehicle not found");
+        }
+
         vehicleRepository.updateSpeed(id, speed);
+        return "veiculo atualizado com sucesso";
+    }
+
+    private static void isSpeedValid(String speed) {
+        double speedNumber;
+        try {
+            speedNumber = Double.parseDouble(speed);
+        } catch (Exception e) {
+           throw new InvalidVehicleException("Speed malformed");
+        }
+
+        if (speedNumber < 0) {
+            throw new InvalidVehicleException("Speed must be greater or equal than 0");
+        }
     }
 
 

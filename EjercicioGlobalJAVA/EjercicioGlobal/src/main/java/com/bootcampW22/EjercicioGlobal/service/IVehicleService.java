@@ -3,7 +3,6 @@ package com.bootcampW22.EjercicioGlobal.service;
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 
-import java.io.NotActiveException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ public interface IVehicleService {
 
     List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos);
 
-    void updateSpeed(Long id, String speed);
+    String updateSpeed(Long id, String speed);
 
     void deleteVehicle(Long id);
     String addVehicle(VehicleDto vehicle);
