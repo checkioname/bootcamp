@@ -23,4 +23,6 @@ public interface IVehicleRepository {
     List<Long> getDuplicatedVehiclesIds(List<Vehicle> vehicles);
 
     void updateSpeed(Long id, String speed);
+
+    List<Vehicle> getVehiclesByFuel(String type);
 }

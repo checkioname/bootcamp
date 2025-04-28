@@ -1,6 +1,7 @@
 package com.bootcampW22.EjercicioGlobal.service;
 
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
+import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface IVehicleService {
     String addVehicle(VehicleDto vehicle);
     List<VehicleDto> findVehicles(Optional<String> color, Optional<Integer> year);
     List<VehicleDto> findVehicles(String brand, int start_date, int end_date);
+
+    List<VehicleDto> getVehiclesByFuel(String type);
 }

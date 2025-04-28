@@ -96,6 +96,13 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
         });
     }
 
+    @Override
+    public List<Vehicle> getVehiclesByFuel(String type) {
+        return listOfVehicles.stream()
+                .filter(v -> v.getFuel_type().equalsIgnoreCase(type))
+                .toList();
+    }
+
     private void loadDataBase() throws IOException {
         File file;
         ObjectMapper objectMapper = new ObjectMapper();

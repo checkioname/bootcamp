@@ -15,26 +15,26 @@ import java.security.InvalidParameterException;
 @ControllerAdvice(assignableTypes=VehicleController.class)
 public class ExceptionController {
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> notFound(NotFoundException e){
+    public ResponseEntity notFound(NotFoundException e){
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
-        return new ResponseEntity<>(exceptionDto, HttpStatus.NOT_FOUND);
+        return new ResponseEntity(exceptionDto, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DuplicateVehicleException.class)
-    public ResponseEntity<?> duplicateVehicle(DuplicateVehicleException e){
+    public ResponseEntity duplicateVehicle(DuplicateVehicleException e){
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
-        return new ResponseEntity<>(exceptionDto, HttpStatus.CONFLICT);
+        return new ResponseEntity(exceptionDto, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidVehicleException.class)
-    public ResponseEntity<?> invalidVehicle(InvalidVehicleException e){
+    public ResponseEntity invalidVehicle(InvalidVehicleException e){
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
-        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(exceptionDto, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(InvalidParameterException.class)
-    public ResponseEntity<?> invalidParameter(InvalidParameterException e){
+    public ResponseEntity invalidParameter(InvalidParameterException e){
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
-        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(exceptionDto, HttpStatus.BAD_REQUEST);
     }
 
 }

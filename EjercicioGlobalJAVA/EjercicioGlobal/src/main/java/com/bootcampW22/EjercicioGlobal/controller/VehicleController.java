@@ -1,21 +1,14 @@
 package com.bootcampW22.EjercicioGlobal.controller;
 
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
-import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.service.IVehicleService;
 import com.bootcampW22.EjercicioGlobal.service.VehicleServiceImpl;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
-import javax.management.openmbean.KeyAlreadyExistsException;
-import java.security.InvalidParameterException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 public class VehicleController {
@@ -38,31 +31,35 @@ public class VehicleController {
     }
 
     @GetMapping("/vehicles/average_speed/brand/{brand}")
-    public ResponseEntity<?> getBrandMeanSpeed(@PathVariable String brand) {
-            return ResponseEntity.ok(vehicleService.getBrandMeanSpeed(brand));
+    public ResponseEntity<Double> getBrandMeanSpeed(@PathVariable String brand) {
+        return ResponseEntity.ok(vehicleService.getBrandMeanSpeed(brand));
     }
 
     @PostMapping("/vehicles/batch")
-    public ResponseEntity<?> bulkInsert(@RequestBody List<VehicleDto> vehicles) {
-            return ResponseEntity.ok(vehicleService.bulkInsert(vehicles));
+    public ResponseEntity<List<VehicleDto>> bulkInsert(@RequestBody List<VehicleDto> vehicles) {
+        return ResponseEntity.ok(vehicleService.bulkInsert(vehicles));
    }
 
     @PutMapping("/vehicles/{id}/update_speed")
-    public ResponseEntity<?> updateSpeed(@PathVariable long id, @RequestParam String speed) {
-            return ResponseEntity.ok(vehicleService.updateSpeed(id, speed));
+    public ResponseEntity<String> updateSpeed(@PathVariable long id, @RequestParam String speed) {
+        return ResponseEntity.ok(vehicleService.updateSpeed(id, speed));
    }
 
-
-    @DeleteMapping("/vehicles/{id}")
-    public ResponseEntity<?> deleteVehicle(@PathVariable Long id) {
-            vehicleService.deleteVehicle(id);
-            return ResponseEntity.noContent().build();
+   @GetMapping("/vehicle/fuel_type/{type}")
+   public ResponseEntity<List<VehicleDto>> vehiclesByFuel(@PathVariable String type) {
+        return ResponseEntity.ok(vehicleService.getVehiclesByFuel(type));
    }
 
-    @PostMapping("/vehicles")
-    public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
-        return ResponseEntity.ok(vehicleService.addVehicle(vehicle));
-    }
+   @DeleteMapping("/vehicles/{id}")
+   public ResponseEntity<HttpStatus> deleteVehicle(@PathVariable Long id) {
+       vehicleService.deleteVehicle(id);
+       return ResponseEntity.noContent().build();
+   }
+
+   @PostMapping("/vehicles")
+   public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
+       return ResponseEntity.ok(vehicleService.addVehicle(vehicle));
+   }
 
 
 

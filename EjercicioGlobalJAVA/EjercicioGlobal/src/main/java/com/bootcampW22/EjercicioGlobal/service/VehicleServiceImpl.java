@@ -61,6 +61,7 @@ public class VehicleServiceImpl implements IVehicleService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public double getBrandMeanSpeed(String brand) throws NotFoundException {
        return vehicleRepository.meanSpeedByBrand(brand);
@@ -104,6 +105,15 @@ public class VehicleServiceImpl implements IVehicleService {
         if (speedNumber < 0) {
             throw new InvalidVehicleException("Speed must be greater or equal than 0");
         }
+    }
+
+    @Override
+    public List<VehicleDto> getVehiclesByFuel(String type) {
+        List<Vehicle> vehicles = vehicleRepository.getVehiclesByFuel(type);
+        if (vehicles.isEmpty()) {
+            throw new NotFoundException("No vehicle was found");
+        }
+        return vehicles.stream().map(this::convertVehicleToDto).toList();
     }
 
 
