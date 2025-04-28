@@ -56,6 +56,11 @@ public class VehicleController {
        return ResponseEntity.noContent().build();
    }
 
+   @GetMapping("/vehicles/transmission/{type}")
+   public ResponseEntity<List<VehicleDto>> getVehicleByTransmission(@PathVariable String type) {
+        return ResponseEntity.ok(vehicleService.getVehicleByTransmission(type));
+   }
+
    @PostMapping("/vehicles")
    public ResponseEntity<?> createVehicle(@RequestBody VehicleDto vehicle) {
        return ResponseEntity.ok(vehicleService.addVehicle(vehicle));

@@ -22,4 +22,6 @@ public interface IVehicleService {
     List<VehicleDto> findVehicles(String brand, int start_date, int end_date);
 
     List<VehicleDto> getVehiclesByFuel(String type);
+
+    List<VehicleDto> getVehicleByTransmission(String type);
 }

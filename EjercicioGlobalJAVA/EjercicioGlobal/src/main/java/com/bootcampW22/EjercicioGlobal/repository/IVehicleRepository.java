@@ -25,4 +25,6 @@ public interface IVehicleRepository {
     void updateSpeed(Long id, String speed);
 
     List<Vehicle> getVehiclesByFuel(String type);
+
+    List<Vehicle> getVehiclesByTransmission(String type);
 }

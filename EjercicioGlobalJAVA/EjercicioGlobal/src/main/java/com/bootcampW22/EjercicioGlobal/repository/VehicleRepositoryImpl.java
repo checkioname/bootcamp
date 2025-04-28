@@ -103,6 +103,11 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
                 .toList();
     }
 
+    @Override
+    public List<Vehicle> getVehiclesByTransmission(String type) {
+        return listOfVehicles.stream().filter(v -> v.getTransmission().equalsIgnoreCase(type)).toList();
+    }
+
     private void loadDataBase() throws IOException {
         File file;
         ObjectMapper objectMapper = new ObjectMapper();

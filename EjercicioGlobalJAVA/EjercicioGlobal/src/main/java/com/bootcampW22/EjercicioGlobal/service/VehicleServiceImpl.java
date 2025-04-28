@@ -131,6 +131,15 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
+    public List<VehicleDto> getVehicleByTransmission(String type) {
+        List<Vehicle> vehicles =  vehicleRepository.getVehiclesByTransmission(type);
+        if (vehicles.isEmpty()) {
+            throw new NotFoundException("No vehicle was found");
+        }
+        return vehicles.stream().map(this::convertVehicleToDto).toList();
+    }
+
+    @Override
     public String addVehicle(VehicleDto vehicle) {
         List<String> validationErrors = validateVehicle(vehicle);
         if (!validationErrors.isEmpty()) {
