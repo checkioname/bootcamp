@@ -2,6 +2,8 @@ package repository
 
 import (
 	"app/internal"
+	"errors"
+	"fmt"
 )
 
 // NewVehicleMap is a function that returns a new instance of VehicleMap
@@ -24,20 +26,19 @@ type VehicleMap struct {
 func (r *VehicleMap) FindAll() (v map[int]internal.Vehicle, err error) {
 	v = make(map[int]internal.Vehicle)
 
-	// copy db
-	for key, value := range r.db {
-		v[key] = value
+	for _, value := range r.db {
+		v[value.Id] = value
 	}
 
 	return
 }
 
-//func (r *VehicleMap) Add(v handler.VehicleJSON) error {
-//	exist := r.db[v.Id]
-//	if &exist != nil {
-//		return errors.New("Vehicle already exists")
-//	}
-//
-//	r.db[v.Id] = v
-//	return nil
-//}
+func (r *VehicleMap) AddVehicle(v internal.Vehicle) error {
+	if u, ok := r.db[v.Id]; ok {
+		fmt.Printf("%q is the username of %q\n", u, v)
+		return errors.New("vehicle already exists")
+	}
+
+	r.db[v.Id] = v
+	return nil
+}

@@ -21,11 +21,11 @@ func (s *VehicleDefault) FindAll() (v map[int]internal.Vehicle, err error) {
 	return
 }
 
-//func (s *VehicleDefault) Add(v handler.VehicleJSON) (err error) {
-//
-//	err = s.rp.Add(v)
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
+func (s *VehicleDefault) Add(v internal.Vehicle) (err error) {
+
+	err = s.rp.AddVehicle(v)
+	if err != nil {
+		return err
+	}
+	return nil
+}

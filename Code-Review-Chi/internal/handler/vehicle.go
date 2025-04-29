@@ -53,8 +53,8 @@ func (h *VehicleDefault) GetAll() http.HandlerFunc {
 
 		// response
 		data := make(map[int]VehicleJSON)
-		for key, value := range v {
-			data[key] = VehicleJSON{
+		for _, value := range v {
+			data[value.Id] = VehicleJSON{
 				ID:              value.Id,
 				Brand:           value.Brand,
 				Model:           value.Model,
@@ -84,10 +84,37 @@ func (h *VehicleDefault) Add() http.HandlerFunc {
 		json.NewDecoder(r.Body).Decode(&vehicle)
 		r.Body.Close()
 
+		v := ToVehicle(vehicle)
+
+		err := h.sv.Add(*v)
+		if err != nil {
+			response.JSON(w, http.StatusInternalServerError, "Houve um erro interno"+err.Error())
+			return
+		}
+
 		response.JSON(w, http.StatusOK, map[string]any{
 			"message": "success",
-			"data":    vehicle,
+			"data":    v,
 		})
-		//_ = h.sv.Add(v)
 	}
+}
+
+func ToVehicle(vehicle VehicleJSON) *internal.Vehicle {
+	v := &internal.Vehicle{
+		Id: vehicle.ID,
+	}
+	v.VehicleAttributes.Brand = vehicle.Brand
+	v.VehicleAttributes.Model = "juketil"
+	v.VehicleAttributes.Registration = vehicle.Registration
+	v.VehicleAttributes.Color = vehicle.Color
+	v.VehicleAttributes.FabricationYear = vehicle.FabricationYear
+	v.VehicleAttributes.Capacity = vehicle.Capacity
+	v.VehicleAttributes.MaxSpeed = vehicle.MaxSpeed
+	v.VehicleAttributes.FuelType = vehicle.FuelType
+	v.VehicleAttributes.Transmission = vehicle.Transmission
+	v.VehicleAttributes.Weight = vehicle.Weight
+	v.VehicleAttributes.Height = vehicle.Height
+	v.VehicleAttributes.Length = vehicle.Length
+	v.VehicleAttributes.Width = vehicle.Width
+	return v
 }
