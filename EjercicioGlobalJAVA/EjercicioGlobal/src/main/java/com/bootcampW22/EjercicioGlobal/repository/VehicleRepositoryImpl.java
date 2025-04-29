@@ -1,8 +1,6 @@
 package com.bootcampW22.EjercicioGlobal.repository;
 
 import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
-import com.bootcampW22.EjercicioGlobal.exception.InvalidVehicleException;
-import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -11,10 +9,8 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class VehicleRepositoryImpl implements IVehicleRepository{
@@ -46,14 +42,11 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     @Override
     public List<Vehicle> findVehicles(String brand, int start_date, int end_date) {
         return listOfVehicles.stream()
-                .filter(v -> v.getBrand().equalsIgnoreCase(brand) && v.getYear() >= start_date && v.getYear() <= end_date)
+                .filter(v -> v.getBrand().equalsIgnoreCase(brand))
+                .filter(v -> v.getYear() >= start_date && v.getYear() <= end_date)
                 .toList();
     }
 
-    @Override
-    public boolean deleteVehicle(Long id) {
-        return listOfVehicles.removeIf(v -> v.getId() == id);
-    }
 
     @Override
     public boolean addVehicle(Vehicle vehicle) {
@@ -61,30 +54,21 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     }
 
     @Override
-    public double meanSpeedByBrand(String brand) throws NotFoundException {
-        return listOfVehicles.stream()
-                .filter(v -> v.getBrand().equalsIgnoreCase(brand))
-                .mapToInt(v -> Integer.parseInt(v.getMax_speed()))
-                .average()
-                .orElseThrow(() -> new InvalidVehicleException("Nenhuma marca encontrada!"));
-    }
-
-    @Override
-    public List<Vehicle> bulkInsert(List<Vehicle> vehicles) {
-
-       var response = listOfVehicles.addAll(vehicles);
-        if (response) {
-            return listOfVehicles;
-        }
-        return Collections.emptyList();
+    public void bulkInsert(List<Vehicle> vehicles) {
+        listOfVehicles.addAll(vehicles);
+//       var response =
+//        if (response) {
+//            return listOfVehicles;
+//        }
+//        return Collections.emptyList();
     }
 
     @Override
     public List<Long> getDuplicatedVehiclesIds(List<Vehicle> vehicles) {
-        return  listOfVehicles.stream()
+        return listOfVehicles.stream()
                         .filter(v -> vehicles.contains(v))
                         .map(Vehicle::getId)
-                        .collect(Collectors.toList());
+                        .toList();
     }
 
     @Override
@@ -106,6 +90,26 @@ public class VehicleRepositoryImpl implements IVehicleRepository{
     @Override
     public List<Vehicle> getVehiclesByTransmission(String type) {
         return listOfVehicles.stream().filter(v -> v.getTransmission().equalsIgnoreCase(type)).toList();
+    }
+
+    @Override
+    public void updateFuelType(Long id, String type) {
+        listOfVehicles.stream().forEach(v -> {
+            if (v.getId().equals(id)) {
+                v.setFuel_type(type);
+            }
+        });
+    }
+
+    @Override
+    public boolean deleteVehicle(Long id) {
+        return listOfVehicles.removeIf(v -> v.getId().equals(id));
+    }
+
+
+    @Override
+    public List<Vehicle> getVehiclesByBrand(String brand) {
+        return listOfVehicles.stream().filter(v -> v.getBrand().equalsIgnoreCase(brand)).toList();
     }
 
     private void loadDataBase() throws IOException {

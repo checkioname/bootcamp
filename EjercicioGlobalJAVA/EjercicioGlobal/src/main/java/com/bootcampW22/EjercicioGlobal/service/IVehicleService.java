@@ -1,7 +1,6 @@
 package com.bootcampW22.EjercicioGlobal.service;
 
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
-import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 
 import java.util.List;
@@ -11,17 +10,14 @@ public interface IVehicleService {
     List<VehicleDto> searchAllVehicles();
 
     double getBrandMeanSpeed(String brand) throws NotFoundException;
-
-    List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos);
-
+    void bulkInsert(List<VehicleDto> vehiclesDtos);
     String updateSpeed(Long id, String speed);
-
-    void deleteVehicle(Long id);
     String addVehicle(VehicleDto vehicle);
     List<VehicleDto> findVehicles(Optional<String> color, Optional<Integer> year);
     List<VehicleDto> findVehicles(String brand, int start_date, int end_date);
-
     List<VehicleDto> getVehiclesByFuel(String type);
-
+    void deleteById(Long id);
     List<VehicleDto> getVehicleByTransmission(String type);
+    void updateFuelType(Long id, String type);
+    Double getAverageBrandCapacity(String brand);
 }

@@ -3,14 +3,13 @@ package com.bootcampW22.EjercicioGlobal.service;
 import com.bootcampW22.EjercicioGlobal.dto.VehicleDto;
 import com.bootcampW22.EjercicioGlobal.entity.Vehicle;
 import com.bootcampW22.EjercicioGlobal.exception.DuplicateVehicleException;
+import com.bootcampW22.EjercicioGlobal.exception.InvalidFuelType;
 import com.bootcampW22.EjercicioGlobal.exception.InvalidVehicleException;
 import com.bootcampW22.EjercicioGlobal.exception.NotFoundException;
 import com.bootcampW22.EjercicioGlobal.repository.IVehicleRepository;
 import com.bootcampW22.EjercicioGlobal.repository.VehicleRepositoryImpl;
 import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,32 +51,36 @@ public class VehicleServiceImpl implements IVehicleService {
 
     @Override
     public List<VehicleDto> findVehicles(String brand, int start_date, int end_date) {
-        List<Vehicle> vehicleList = vehicleRepository.findVehicles(brand, start_date, end_date);
-        if (vehicleList.isEmpty()) {
-            throw new NotFoundException("Nenhum veiculo encontrado");
+        List<Vehicle> vehicles = vehicleRepository.findVehicles(brand, start_date, end_date);
+        if (vehicles.isEmpty()) {
+            throw new NotFoundException("No vehicle was found!");
         }
-        return vehicleList.stream()
+
+        return vehicles.stream()
                 .map(this::convertVehicleToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
     @Override
     public double getBrandMeanSpeed(String brand) throws NotFoundException {
-       return vehicleRepository.meanSpeedByBrand(brand);
+       return vehicleRepository.getVehiclesByBrand(brand).stream()
+               .mapToInt(v -> Integer.parseInt(v.getMax_speed()))
+               .average()
+               .orElseThrow(() -> new InvalidVehicleException("Nenhuma marca encontrada!"));
     }
 
     @Override
-    public List<VehicleDto> bulkInsert(List<VehicleDto> vehiclesDtos) {
-        var vehicles = vehiclesDtos.stream().map(this::convertDtoToDomain).toList();
-        var existingVehicles = vehicleRepository.getDuplicatedVehiclesIds(vehicles);
-        System.out.println(existingVehicles);
+    public void bulkInsert(List<VehicleDto> vehiclesDtos) {
+        List<Vehicle> vehicles = vehiclesDtos.stream().map(this::convertDtoToDomain).toList();
+        List<Long> existingVehicles = vehicleRepository.getDuplicatedVehiclesIds(vehicles);
         if (!existingVehicles.isEmpty()) {
             throw new DuplicateVehicleException("Esses veiculos ja foram adicionados: " + existingVehicles);
         }
 
-        var response = vehicleRepository.bulkInsert(vehicles);
-        return response.stream().map(this::convertVehicleToDto).toList();
+        vehicleRepository.bulkInsert(vehicles);
+//        return vehiclesDtos;
+//                response.stream().map(this::convertVehicleToDto).toList();
     }
 
     @Override
@@ -116,19 +119,20 @@ public class VehicleServiceImpl implements IVehicleService {
         return vehicles.stream().map(this::convertVehicleToDto).toList();
     }
 
-
     @Override
-    public void deleteVehicle(Long id) {
-        if (isIdValid(id)) {
-            var vehicle = vehicleRepository.findById(id); // Método findById retornando Car ou null
-            if (vehicle.isEmpty()) {
-                throw new NotFoundException(("Veículo não encontrado com ID: " + id));
-            }
-            vehicleRepository.deleteVehicle(vehicle.get().getId());
-            return;
+    public void deleteById(Long id) {
+        if (!isIdValid(id)) {
+            throw new InvalidVehicleException("The id is malformed");
         }
-        throw new InvalidParameterException("O parametro fornecido é inválido");
+
+        var vehicle = vehicleRepository.findById(id);
+        if (vehicle.isEmpty()) {
+            throw new NotFoundException("No vehicle was found");
+        }
+
+        vehicleRepository.deleteVehicle(id);
     }
+
 
     @Override
     public List<VehicleDto> getVehicleByTransmission(String type) {
@@ -137,6 +141,30 @@ public class VehicleServiceImpl implements IVehicleService {
             throw new NotFoundException("No vehicle was found");
         }
         return vehicles.stream().map(this::convertVehicleToDto).toList();
+    }
+
+    @Override
+    public void updateFuelType(Long id, String type) {
+        var vehicle = vehicleRepository.findById(id);
+        if (vehicle.isEmpty()) {
+            throw new NotFoundException("No vehicle was found");
+        }
+        if (!isFuelTypeValid(type)) {
+            throw new InvalidFuelType("Fuel type does not exist");
+        }
+        vehicleRepository.updateFuelType(id, type.toLowerCase());
+    }
+
+    @Override
+    public Double getAverageBrandCapacity(String brand) {
+        return vehicleRepository.getVehiclesByBrand(brand).stream()
+               .mapToInt(Vehicle::getPassengers)
+               .average()
+               .orElseThrow(() -> new InvalidVehicleException("No vehicle was found"));
+    }
+
+    private boolean isFuelTypeValid(String type) {
+        return true;
     }
 
     @Override

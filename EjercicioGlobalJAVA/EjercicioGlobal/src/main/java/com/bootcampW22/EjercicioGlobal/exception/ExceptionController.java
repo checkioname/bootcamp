@@ -37,4 +37,9 @@ public class ExceptionController {
         return new ResponseEntity(exceptionDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidFuelType.class)
+    public ResponseEntity invalidFuelType(InvalidFuelType e) {
+        return new ResponseEntity(new ExceptionDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
 }
